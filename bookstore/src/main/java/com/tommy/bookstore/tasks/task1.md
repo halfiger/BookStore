@@ -1,20 +1,27 @@
 12 ++
 
-        CREATE TABLE my_db.magazine (
-        id BIGINT PRIMARY KEY AUTO_INCREMENT,
-        name VARCHAR(100),
-        |||Publisher VARCHAR(100),
-        );
+CREATE TABLE publisher (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(100)
+);
 
-        CREATE TABLE my_db.publisher (
-        id BIGINT PRIMARY KEY AUTO_INCREMENT,
-        name VARCHAR(100),
-        |||Magazines
-        );
+CREATE TABLE magazine (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(100),
+price DECIMAL(10,2),
+publisher_id BIGINT,
 
+    FOREIGN KEY (publisher_id)
+        REFERENCES publisher(id)
+);
 
-        bookService.saveBook(new Book("Ulysses", "James Joyce", 441));
-        bookService.saveBook(new Book("The Great Gatsby", "F. Scott Fitzgerald", 341));
+Якщо Hibernate налаштований правильно — 
+таблиці можуть створитися автоматично 
+просто після запуску main().
+🔥 Що для цього потрібно
+У hibernate.cfg.xml має бути:
+<property name="hibernate.hbm2ddl.auto">create</property>
+але всі дані кожного разу перезаписуватимуться
 
 
 Зараз зробимо ПЕРШИЙ relation-проект.

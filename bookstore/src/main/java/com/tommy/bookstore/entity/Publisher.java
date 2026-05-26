@@ -1,25 +1,40 @@
 package com.tommy.bookstore.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import org.hibernate.Session;
 
+import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
+@Table(name="publishers")
 public class Publisher {
-    Long id;
-    String name;
-    @OneToMany
-    @JoinColumn(table="my_db.magazine")
-    List<Magazine> magazines;
+
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+
+    @OneToMany (mappedBy = "publisher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)   ///  хто володар relation --> publisher!
+    private List<Magazine> magazines;
 
     public Publisher() {}
 
-    public Publisher(String name, List<Magazine> magazines) {
+    public Publisher(String name) {
         this.name = name;
-        this.magazines = magazines;
+    }
+
+    public void addMagazine(Magazine magazine) {
+
+        if (magazines == null) {
+            magazines = new ArrayList<>();
+        }
+
+        magazines.add(magazine);
+
+        magazine.setPublisher(this);
     }
 
     public Long getId() {
@@ -38,12 +53,13 @@ public class Publisher {
         this.name = name;
     }
 
-    public List<Magazine> getMagazines() {
-        return magazines;
-    }
 
-    public void setMagazines(List<Magazine> magazines) {
-        this.magazines = magazines;
+
+    public void setMagazines (Magazine newMagazine) {
+        if (magazines == null) {
+            magazines = new ArrayList<>();
+        }
+        magazines.add(newMagazine);
     }
 
     @Override
@@ -51,7 +67,6 @@ public class Publisher {
         return "Publisher{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", magazines=" + magazines +
                 '}';
     }
 }

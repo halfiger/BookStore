@@ -10,6 +10,7 @@ public class HibernateUtil {
         factory = new Configuration()
                 .configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Magazine.class)
+                .addAnnotatedClass(Publisher.class)
                 .buildSessionFactory();
     }
 

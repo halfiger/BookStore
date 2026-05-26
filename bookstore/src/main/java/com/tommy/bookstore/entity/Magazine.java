@@ -1,23 +1,27 @@
 package com.tommy.bookstore.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "magazines")
 public class Magazine {
 
-Long id;
-String name;
-int price;
-@ManyToOne()
-Publisher publisher;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private double price;
 
-public Magazine () {}
+    @ManyToOne()
+    @JoinColumn(name="publisher_id")
+    private Publisher publisher;
 
-    public Magazine(String name, int price, Publisher publisher) {
+    public Magazine() {
+    }
+
+    public Magazine(String name, double price) {
         this.name = name;
         this.price = price;
-        this.publisher = publisher;
     }
 
     public Long getId() {
@@ -36,11 +40,11 @@ public Magazine () {}
         this.name = name;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
