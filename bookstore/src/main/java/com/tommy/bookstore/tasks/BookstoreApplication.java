@@ -9,17 +9,24 @@ import java.util.List;
 public class BookstoreApplication {
 
 	public static void main(String[] args) {
-		BookstoreService bookstoreService = new BookstoreService();
-		Publisher publisher = bookstoreService.findPublisherById(2L);
-		System.out.println(publisher.toString());
-		List<Magazine> magazineList = bookstoreService.getAllMagazines(2L);
+//		BookstoreService bookstoreService = new BookstoreService();
+//		Publisher publisher = bookstoreService.findPublisherById(2L);
+//		System.out.println(publisher.toString());
+//		List<Magazine> magazineList = bookstoreService.getAllMagazines(2L);
+//
+//		for (Magazine m : magazineList) {
+//			if (m != null) {
+//				System.out.println(m);
+//			}
+//		}
+//
+//		System.out.println(magazineList);
 
-		for (Magazine m : magazineList) {
-			if (m!=null) {
-				System.out.println(m);
-			}
-		}
 
-		System.out.println(magazineList);
-	}
+	BookstoreService bookstoreService = new BookstoreService();
+	Publisher publisher = bookstoreService.findPublisherById(2L);
+	// task 4 --> transaction ended
+		System.out.println(publisher.getMagazines());
+
+}
 }

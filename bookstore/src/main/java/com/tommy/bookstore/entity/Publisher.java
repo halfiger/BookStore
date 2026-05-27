@@ -1,7 +1,6 @@
 package com.tommy.bookstore.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,9 @@ public class Publisher {
         this.name = name;
     }
 
-
+    public List<Magazine> getMagazines() {
+        return magazines;
+    }
 
     public void setMagazines (Magazine newMagazine) {
         if (magazines == null) {

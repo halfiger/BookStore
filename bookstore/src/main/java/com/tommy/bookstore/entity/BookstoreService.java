@@ -26,19 +26,35 @@ public class BookstoreService {
     public List<Magazine> getAllMagazines (long ID) {
         Session session = factory.getCurrentSession();
         session.beginTransaction();
-        List <Magazine> list = session.createQuery("from Magazine m where m.publisher.id = :id", Magazine.class).setParameter("id", ID).getResultList();
+        List <Magazine> list = session
+                .createQuery("from Magazine m where m.publisher.id = :id",
+                        Magazine.class)
+                .setParameter("id", ID)
+                .getResultList();
         session.getTransaction().commit();
         return list;
     }
 
     public Publisher findPublisherById (Long id) {
         Session session = factory.getCurrentSession();
-
         session.beginTransaction();
         Publisher publisher = session.get(Publisher.class, id);
         session.getTransaction().commit();
         return publisher;
     }
+
+    public Publisher findPublisherWithMagazinesAndFetching (Long ID) {
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        Publisher publisher = session.createQuery(
+         "SELECT p FROM Publisher p JOIN FETCH p.magazines WHERE p.id = :id",
+                        Publisher.class)
+                .setParameter("id", ID)
+                .uniqueResult();
+        session.getTransaction().commit();
+        return publisher;
+    }
+
 
 
 
