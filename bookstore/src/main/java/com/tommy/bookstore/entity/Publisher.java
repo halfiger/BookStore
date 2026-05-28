@@ -9,8 +9,6 @@ import java.util.List;
 @Table(name="publishers")
 public class Publisher {
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

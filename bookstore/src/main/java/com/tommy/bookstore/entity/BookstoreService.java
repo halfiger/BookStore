@@ -34,15 +34,18 @@ public class BookstoreService {
         session.getTransaction().commit();
         return list;
     }
-
+    //task4
     public Publisher findPublisherById (Long id) {
         Session session = factory.getCurrentSession();
         session.beginTransaction();
         Publisher publisher = session.get(Publisher.class, id);
+        publisher.getMagazines().size();//итрість, спеціально:тригерить lazy loading
         session.getTransaction().commit();
         return publisher;
     }
 
+
+    //task5
     public Publisher findPublisherWithMagazinesAndFetching (Long ID) {
         Session session = factory.getCurrentSession();
         session.beginTransaction();

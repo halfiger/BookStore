@@ -27,6 +27,10 @@ public class BookstoreApplication {
 	Publisher publisher = bookstoreService.findPublisherById(2L);
 	// task 4 --> transaction ended
 		System.out.println(publisher.getMagazines());
+	for (Magazine m : publisher.getMagazines()) {
+		System.out.println(m);
+	}
+
 
 }
 }
