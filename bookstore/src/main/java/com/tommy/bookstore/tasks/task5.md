@@ -147,3 +147,52 @@ Service:
 # Вона використовується для уникнення проблеми N+1
 # і замінює ліниву (LAZY) стратегію завантаження
 # на жадібну (EAGER) лише для поточного запиту.
+
+
+---- пояснення
+JOIN FETCH
+якраз і є:
+
+одне з головних рішень LazyInitializationException
+🔥 Логіка така
+❌ Без JOIN FETCH
+
+Hibernate робить:
+
+SELECT publisher
+А magazines:
+ще НЕ завантажені
+Потім session закривається.
+І коли ти робиш:
+publisher.getMagazines()
+
+Hibernate каже:
+
+“треба зробити ще SQL”
+Але:
+session already closed
+⚠️ І тоді:
+LazyInitializationException
+🔥 А JOIN FETCH
+
+робить:
+
+SELECT publisher + magazines JOIN
+🧠 Тобто:
+
+relation уже:
+
+повністю завантажена
+
+ще ДО закриття session.
+
+І тому:
+publisher.getMagazines()
+
+після commit:
+✅ працює нормально.
+
+🔥 Тобто ти правий:
+JOIN FETCH —
+
+це вже і є рішення проблеми.

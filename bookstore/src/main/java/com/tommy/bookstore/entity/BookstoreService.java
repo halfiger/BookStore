@@ -39,7 +39,7 @@ public class BookstoreService {
         Session session = factory.getCurrentSession();
         session.beginTransaction();
         Publisher publisher = session.get(Publisher.class, id);
-        publisher.getMagazines().size();//итрість, спеціально:тригерить lazy loading
+        publisher.getMagazines().size();//хитрість, спеціально команда підвантажує додатково ще і магазини які не завантажилися через lazy:тригерить lazy loading
         session.getTransaction().commit();
         return publisher;
     }
@@ -58,7 +58,15 @@ public class BookstoreService {
         return publisher;
     }
 
-
-
-
+    //task6
+    public List <Publisher> findAllpublisher () {
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        List <Publisher> list = session.createQuery("FROM Publisher", Publisher.class).getResultList();
+        for (Publisher p : list) {
+            p.getMagazines().size(); // підвантажили журнали
+        }
+        session.getTransaction().commit();
+        return list;
+    }
 }
