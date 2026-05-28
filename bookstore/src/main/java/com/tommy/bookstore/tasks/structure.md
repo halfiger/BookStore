@@ -23,16 +23,6 @@ import java.util.List;
 
 public class BookstoreApplication {
 
-package com.tommy.bookstore.tasks;
-
-import com.tommy.bookstore.entity.BookstoreService;
-import com.tommy.bookstore.entity.Magazine;
-import com.tommy.bookstore.entity.Publisher;
-
-import java.util.List;
-
-public class BookstoreApplication {
-
     public static void main(String[] args) {
 //		BookstoreService bookstoreService = new BookstoreService();
 //		Publisher publisher = bookstoreService.findPublisherById(2L);
@@ -57,12 +47,20 @@ public class BookstoreApplication {
 //	}
 
 
-        BookstoreService bookstoreService = new BookstoreService();
-        List<Publisher> list = bookstoreService.findAllpublisher();
+//        BookstoreService bookstoreService = new BookstoreService();
+//        List<Publisher> list = bookstoreService.findAllpublisher();
+//
+//        for (Publisher p : list) {
+//            System.out.println(p.getMagazines().toString());
+//        }
+//7
+BookstoreService bookstoreService = new BookstoreService();
+List<Publisher> list = bookstoreService.findAllPublishersWithMagasines7();
+for (Publisher p : list) {
+System.out.println(p.getMagazines());
+}
 
-        for (Publisher p : list) {
-            System.out.println(p.getMagazines().toString());
-        }
+
     }
 }
 
@@ -159,7 +157,10 @@ public class Publisher {
     private Long id;
     private String name;
 
-    @OneToMany (mappedBy = "publisher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)   ///  хто володар relation --> publisher!
+    @OneToMany (mappedBy = "publisher",
+                cascade = CascadeType.ALL,
+                fetch = FetchType.LAZY)
+
     private List<Magazine> magazines;
 
     public Publisher() {}
@@ -282,13 +283,24 @@ HibernateUtil.getFactory();
         session.beginTransaction();
         List <Publisher> list = session.createQuery("FROM Publisher", Publisher.class).getResultList();
         for (Publisher p : list) {
-            p.getMagazines().size(); // підвантажили журнали
+            p.getMagazines().size(); // хитрість, підвантажили журнали
         }
         session.getTransaction().commit();
         return list;
     }
-}
 
+    //task7 N+1
+    public List <Publisher> findAllPublishersWithMagasines7() {
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        List <Publisher> list = session.createQuery(
+                "SELECT DISTINCT p FROM Publisher p JOIN FETCH p.magazines"
+                , Publisher.class
+        ).getResultList();
+        session.getTransaction().commit();
+        return list;
+    }
+}
 
 ----------------HibernateUtil.java----------------------
 
@@ -325,7 +337,7 @@ private static final SessionFactory factory;
             <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
             <property name="connection.username">bestuser</property>
             <property name="connection.password">bestuser</property>
-            <property name="hibernate.hbm2ddl.auto">create</property>
+            <property name="hibernate.hbm2ddl.auto">update</property>
             <property name="current_session_context_class">thread</property>
             <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
             <property name="show_sql">true</property>
@@ -335,30 +347,28 @@ private static final SessionFactory factory;
 
 
 -------------------Terminal output---------------------
-C:\Java\jdk-25.0.2\bin\java.exe "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2024.3.7\lib\idea_rt.jar=58651" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -classpath D:\Bookstore\bookstore\target\classes;C:\Users\jazzm\.m2\repository\org\hibernate\orm\hibernate-core\6.4.4.Final\hibernate-core-6.4.4.Final.jar;C:\Users\jazzm\.m2\repository\jakarta\transaction\jakarta.transaction-api\2.0.1\jakarta.transaction-api-2.0.1.jar;C:\Users\jazzm\.m2\repository\org\jboss\logging\jboss-logging\3.6.3.Final\jboss-logging-3.6.3.Final.jar;C:\Users\jazzm\.m2\repository\org\hibernate\common\hibernate-commons-annotations\6.0.6.Final\hibernate-commons-annotations-6.0.6.Final.jar;C:\Users\jazzm\.m2\repository\io\smallrye\jandex\3.1.2\jandex-3.1.2.jar;C:\Users\jazzm\.m2\repository\com\fasterxml\classmate\1.7.3\classmate-1.7.3.jar;C:\Users\jazzm\.m2\repository\net\bytebuddy\byte-buddy\1.17.8\byte-buddy-1.17.8.jar;C:\Users\jazzm\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.4\jakarta.xml.bind-api-4.0.4.jar;C:\Users\jazzm\.m2\repository\jakarta\activation\jakarta.activation-api\2.1.4\jakarta.activation-api-2.1.4.jar;C:\Users\jazzm\.m2\repository\org\glassfish\jaxb\jaxb-runtime\4.0.6\jaxb-runtime-4.0.6.jar;C:\Users\jazzm\.m2\repository\org\glassfish\jaxb\jaxb-core\4.0.6\jaxb-core-4.0.6.jar;C:\Users\jazzm\.m2\repository\org\eclipse\angus\angus-activation\2.0.3\angus-activation-2.0.3.jar;C:\Users\jazzm\.m2\repository\org\glassfish\jaxb\txw2\4.0.6\txw2-4.0.6.jar;C:\Users\jazzm\.m2\repository\com\sun\istack\istack-commons-runtime\4.1.2\istack-commons-runtime-4.1.2.jar;C:\Users\jazzm\.m2\repository\jakarta\inject\jakarta.inject-api\2.0.1\jakarta.inject-api-2.0.1.jar;C:\Users\jazzm\.m2\repository\org\antlr\antlr4-runtime\4.13.0\antlr4-runtime-4.13.0.jar;C:\Users\jazzm\.m2\repository\jakarta\persistence\jakarta.persistence-api\3.1.0\jakarta.persistence-api-3.1.0.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-context\6.1.6\spring-context-6.1.6.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-aop\7.0.7\spring-aop-7.0.7.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-beans\7.0.7\spring-beans-7.0.7.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-core\7.0.7\spring-core-7.0.7.jar;C:\Users\jazzm\.m2\repository\commons-logging\commons-logging\1.3.6\commons-logging-1.3.6.jar;C:\Users\jazzm\.m2\repository\org\jspecify\jspecify\1.0.0\jspecify-1.0.0.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-expression\7.0.7\spring-expression-7.0.7.jar;C:\Users\jazzm\.m2\repository\io\micrometer\micrometer-observation\1.16.5\micrometer-observation-1.16.5.jar;C:\Users\jazzm\.m2\repository\io\micrometer\micrometer-commons\1.16.5\micrometer-commons-1.16.5.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-orm\6.1.6\spring-orm-6.1.6.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-jdbc\7.0.7\spring-jdbc-7.0.7.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-tx\6.1.6\spring-tx-6.1.6.jar;C:\Users\jazzm\.m2\repository\com\mysql\mysql-connector-j\8.3.0\mysql-connector-j-8.3.0.jar;C:\Users\jazzm\.m2\repository\org\aspectj\aspectjrt\1.9.25.1\aspectjrt-1.9.25.1.jar;C:\Users\jazzm\.m2\repository\org\aspectj\aspectjweaver\1.9.25.1\aspectjweaver-1.9.25.1.jar;C:\Users\jazzm\.m2\repository\org\slf4j\slf4j-simple\2.0.13\slf4j-simple-2.0.13.jar;C:\Users\jazzm\.m2\repository\org\slf4j\slf4j-api\2.0.17\slf4j-api-2.0.17.jar com.tommy.bookstore.tasks.BookstoreApplication
-May 28, 2026 1:58:58 PM org.hibernate.Version logVersion
+C:\Java\jdk-25.0.2\bin\java.exe "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2024.3.7\lib\idea_rt.jar=52921" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -classpath D:\Bookstore\bookstore\target\classes;C:\Users\jazzm\.m2\repository\org\hibernate\orm\hibernate-core\6.4.4.Final\hibernate-core-6.4.4.Final.jar;C:\Users\jazzm\.m2\repository\jakarta\transaction\jakarta.transaction-api\2.0.1\jakarta.transaction-api-2.0.1.jar;C:\Users\jazzm\.m2\repository\org\jboss\logging\jboss-logging\3.6.3.Final\jboss-logging-3.6.3.Final.jar;C:\Users\jazzm\.m2\repository\org\hibernate\common\hibernate-commons-annotations\6.0.6.Final\hibernate-commons-annotations-6.0.6.Final.jar;C:\Users\jazzm\.m2\repository\io\smallrye\jandex\3.1.2\jandex-3.1.2.jar;C:\Users\jazzm\.m2\repository\com\fasterxml\classmate\1.7.3\classmate-1.7.3.jar;C:\Users\jazzm\.m2\repository\net\bytebuddy\byte-buddy\1.17.8\byte-buddy-1.17.8.jar;C:\Users\jazzm\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.4\jakarta.xml.bind-api-4.0.4.jar;C:\Users\jazzm\.m2\repository\jakarta\activation\jakarta.activation-api\2.1.4\jakarta.activation-api-2.1.4.jar;C:\Users\jazzm\.m2\repository\org\glassfish\jaxb\jaxb-runtime\4.0.6\jaxb-runtime-4.0.6.jar;C:\Users\jazzm\.m2\repository\org\glassfish\jaxb\jaxb-core\4.0.6\jaxb-core-4.0.6.jar;C:\Users\jazzm\.m2\repository\org\eclipse\angus\angus-activation\2.0.3\angus-activation-2.0.3.jar;C:\Users\jazzm\.m2\repository\org\glassfish\jaxb\txw2\4.0.6\txw2-4.0.6.jar;C:\Users\jazzm\.m2\repository\com\sun\istack\istack-commons-runtime\4.1.2\istack-commons-runtime-4.1.2.jar;C:\Users\jazzm\.m2\repository\jakarta\inject\jakarta.inject-api\2.0.1\jakarta.inject-api-2.0.1.jar;C:\Users\jazzm\.m2\repository\org\antlr\antlr4-runtime\4.13.0\antlr4-runtime-4.13.0.jar;C:\Users\jazzm\.m2\repository\jakarta\persistence\jakarta.persistence-api\3.1.0\jakarta.persistence-api-3.1.0.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-context\6.1.6\spring-context-6.1.6.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-aop\7.0.7\spring-aop-7.0.7.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-beans\7.0.7\spring-beans-7.0.7.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-core\7.0.7\spring-core-7.0.7.jar;C:\Users\jazzm\.m2\repository\commons-logging\commons-logging\1.3.6\commons-logging-1.3.6.jar;C:\Users\jazzm\.m2\repository\org\jspecify\jspecify\1.0.0\jspecify-1.0.0.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-expression\7.0.7\spring-expression-7.0.7.jar;C:\Users\jazzm\.m2\repository\io\micrometer\micrometer-observation\1.16.5\micrometer-observation-1.16.5.jar;C:\Users\jazzm\.m2\repository\io\micrometer\micrometer-commons\1.16.5\micrometer-commons-1.16.5.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-orm\6.1.6\spring-orm-6.1.6.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-jdbc\7.0.7\spring-jdbc-7.0.7.jar;C:\Users\jazzm\.m2\repository\org\springframework\spring-tx\6.1.6\spring-tx-6.1.6.jar;C:\Users\jazzm\.m2\repository\com\mysql\mysql-connector-j\8.3.0\mysql-connector-j-8.3.0.jar;C:\Users\jazzm\.m2\repository\org\aspectj\aspectjrt\1.9.25.1\aspectjrt-1.9.25.1.jar;C:\Users\jazzm\.m2\repository\org\aspectj\aspectjweaver\1.9.25.1\aspectjweaver-1.9.25.1.jar;C:\Users\jazzm\.m2\repository\org\slf4j\slf4j-simple\2.0.13\slf4j-simple-2.0.13.jar;C:\Users\jazzm\.m2\repository\org\slf4j\slf4j-api\2.0.17\slf4j-api-2.0.17.jar com.tommy.bookstore.tasks.BookstoreApplication
+May 28, 2026 2:25:26 PM org.hibernate.Version logVersion
 INFO: HHH000412: Hibernate ORM core version 6.4.4.Final
-May 28, 2026 1:58:58 PM org.hibernate.cache.internal.RegionFactoryInitiator initiateService
+May 28, 2026 2:25:27 PM org.hibernate.cache.internal.RegionFactoryInitiator initiateService
 INFO: HHH000026: Second-level cache disabled
-May 28, 2026 1:58:58 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl configure
+May 28, 2026 2:25:27 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl configure
 WARN: HHH10001002: Using built-in connection pool (not intended for production use)
-May 28, 2026 1:58:58 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl buildCreator
+May 28, 2026 2:25:27 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl buildCreator
 INFO: HHH10001005: Loaded JDBC driver class: com.mysql.cj.jdbc.Driver
-May 28, 2026 1:58:58 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl buildCreator
+May 28, 2026 2:25:27 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl buildCreator
 INFO: HHH10001012: Connecting with JDBC URL [jdbc:mysql://localhost:3306/my_db?useSSL=false&serverTimezone=UTC]
-May 28, 2026 1:58:58 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl buildCreator
+May 28, 2026 2:25:27 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl buildCreator
 INFO: HHH10001001: Connection properties: {user=bestuser, password=****}
-May 28, 2026 1:58:58 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl buildCreator
+May 28, 2026 2:25:27 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl buildCreator
 INFO: HHH10001003: Autocommit mode: false
-May 28, 2026 1:58:58 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections <init>
+May 28, 2026 2:25:27 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections <init>
 INFO: HHH10001115: Connection pool size: 20 (min=1)
-May 28, 2026 1:58:59 PM org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl constructDialect
+May 28, 2026 2:25:27 PM org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl constructDialect
 WARN: HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-May 28, 2026 1:59:00 PM org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl getIsolatedConnection
+May 28, 2026 2:25:28 PM org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl getIsolatedConnection
 INFO: HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@6f31df32] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
-Hibernate: select p1_0.id,p1_0.name from publishers p1_0
-Hibernate: select m1_0.publisher_id,m1_0.id,m1_0.name,m1_0.price from magazines m1_0 where m1_0.publisher_id=?
-Hibernate: select m1_0.publisher_id,m1_0.id,m1_0.name,m1_0.price from magazines m1_0 where m1_0.publisher_id=?
+Hibernate: select distinct p1_0.id,m1_0.publisher_id,m1_0.id,m1_0.name,m1_0.price,p1_0.name from publishers p1_0 join magazines m1_0 on p1_0.id=m1_0.publisher_id
 [Magazine{id=1, name='Batman: Gotham Nights #11', price=4.99, publisher=Publisher{id=1, name='DC Comics'}}, Magazine{id=2, name='Superman: Metropolis Weekly #8', price=5.49, publisher=Publisher{id=1, name='DC Comics'}}, Magazine{id=3, name='Flash Speed Force Monthly #21', price=3.95, publisher=Publisher{id=1, name='DC Comics'}}, Magazine{id=4, name='Wonder Woman Amazon Chronicles #14', price=6.25, publisher=Publisher{id=1, name='DC Comics'}}, Magazine{id=5, name='Justice League Unlimited Special #3', price=7.1, publisher=Publisher{id=1, name='DC Comics'}}, Magazine{id=6, name='Green Lantern Cosmic Patrol #17', price=4.75, publisher=Publisher{id=1, name='DC Comics'}}, Magazine{id=7, name='Aquaman Ocean Kingdom Digest #5', price=3.5, publisher=Publisher{id=1, name='DC Comics'}}, Magazine{id=8, name='Teen Titans Academy Journal #12', price=5.2, publisher=Publisher{id=1, name='DC Comics'}}]
 [Magazine{id=9, name='Spider-Man: Web of Shadows #18', price=5.99, publisher=Publisher{id=2, name='Marvel Comics'}}, Magazine{id=10, name='Iron Man Tech Monthly #7', price=6.25, publisher=Publisher{id=2, name='Marvel Comics'}}, Magazine{id=11, name='Captain America Liberty Journal #12', price=4.8, publisher=Publisher{id=2, name='Marvel Comics'}}, Magazine{id=12, name='Thor: Asgard Chronicles #4', price=7.15, publisher=Publisher{id=2, name='Marvel Comics'}}, Magazine{id=13, name='Doctor Strange Mystic Arts Review #9', price=6.7, publisher=Publisher{id=2, name='Marvel Comics'}}, Magazine{id=14, name='Black Panther Wakanda Times #15', price=5.4, publisher=Publisher{id=2, name='Marvel Comics'}}, Magazine{id=15, name='X-Men Mutation Report #22', price=4.95, publisher=Publisher{id=2, name='Marvel Comics'}}, Magazine{id=16, name='Guardians of the Galaxy Space Digest #11', price=6.9, publisher=Publisher{id=2, name='Marvel Comics'}}]
 
@@ -366,58 +376,91 @@ Process finished with exit code 0
 
 
 
----------------task6.md-------------------------------
+---------------task7.md-------------------------------
 
-🚀 Тому наступна нормальна тема тепер:
-№6 — N+1 problem
-І вона прямо пов’язана з JOIN FETCH.
-🧠 Ідея
+📌 Твоє завдання 7
+1️⃣ Створи новий метод: findAllPublishersWithMagazines()
+2️⃣ Використай JPQL:
 
-Уяви:
+SELECT DISTINCT p
+FROM Publisher p
+JOIN FETCH p.magazines
+⚠️ Дуже важливо:
+DISTINCT
+🧠 Чому?
 
-List<Publisher> publishers
-Hibernate робить:
-SELECT publishers
-А потім для КОЖНОГО publisher:
-SELECT magazines WHERE publisher_id=?
-⚠️ Тобто:
+Бо JOIN:
 
-1 запит +
-N запитів.
+розмножує publisher rows
+Наприклад:
+DC + magazine1
+DC + magazine2
+DC + magazine3
+І без DISTINCT:
 
-І це:
-N+1 problem
-🔥 Наступне завдання
-📌 1.
+Hibernate може повернути:
 
-Створити метод:
-
-findAllPublishers()
-Просто:
-FROM Publisher
-📌 2.
+один і той самий publisher багато разів
+📌 3️⃣
 
 У main:
 
-Отримати:
-List<Publisher>
-І циклом:
-for (...)
-Викликати:
-publisher.getMagazines().size()
-📌 3.
+List<Publisher> list =
+service.findAllPublishersWithMagazines();
 
-Подивитися SQL logs.
+for (Publisher p : list) {
+System.out.println(
+p.getMagazines()
+);
+}
+📌 4️⃣
+
+Подивись SQL logs.
 
 🧠 І ти побачиш:
-1 query publishers
-+
-багато query magazines
-⚠️ І це одна з головних ORM performance проблем.
-🚀 А потім:
 
-ми вирішимо її через:
+НЕ:
 
-JOIN FETCH
+1 + N queries
+А:
+ОДИН JOIN query 🙂
+🔥 І це вже:
+реальний production Hibernate optimization
+⚠️ Ще кілька дуже важливих зауважень по твоєму коду
+1️⃣ Оцей коментар неправильний:
+/// хто володар relation --> publisher!
 
-для collection 🙂
+❌ Owner:
+Magazine
+Бо owner side —
+
+це сторона з:
+
+@JoinColumn
+Тобто:
+@ManyToOne
+@JoinColumn(name="publisher_id")
+private Publisher publisher;
+
+Publisher:
+inverse side
+
+через:
+
+mappedBy
+2️⃣ Ось це дуже добре:
+publisher.getMagazines().size();
+
+Бо ти вже:
+свідомо тригериш lazy loading
+І це правильне ORM мислення 🙂
+3️⃣ Ось це:
+<property name="hibernate.hbm2ddl.auto">create</property>
+
+⚠️ Я б уже змінив на:
+update
+Бо зараз:
+
+при кожному запуску:
+
+ти повністю втрачаєш дані

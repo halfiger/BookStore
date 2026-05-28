@@ -64,8 +64,20 @@ public class BookstoreService {
         session.beginTransaction();
         List <Publisher> list = session.createQuery("FROM Publisher", Publisher.class).getResultList();
         for (Publisher p : list) {
-            p.getMagazines().size(); // підвантажили журнали
+            p.getMagazines().size(); // хитрість, підвантажили журнали
         }
+        session.getTransaction().commit();
+        return list;
+    }
+
+    //task7 N+1
+    public List <Publisher> findAllPublishersWithMagasines7() {
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        List <Publisher> list = session.createQuery(
+                "SELECT DISTINCT p FROM Publisher p JOIN FETCH p.magazines"
+                , Publisher.class
+        ).getResultList();
         session.getTransaction().commit();
         return list;
     }

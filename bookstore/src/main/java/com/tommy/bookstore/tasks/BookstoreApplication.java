@@ -32,11 +32,19 @@ public class BookstoreApplication {
 //	}
 
 
+//        BookstoreService bookstoreService = new BookstoreService();
+//        List<Publisher> list = bookstoreService.findAllpublisher();
+//
+//        for (Publisher p : list) {
+//            System.out.println(p.getMagazines().toString());
+//        }
+        //7
         BookstoreService bookstoreService = new BookstoreService();
-        List<Publisher> list = bookstoreService.findAllpublisher();
-
+        List<Publisher> list = bookstoreService.findAllPublishersWithMagasines7();
         for (Publisher p : list) {
-            System.out.println(p.getMagazines().toString());
+            System.out.println(p.getMagazines());
         }
+
+
     }
 }
