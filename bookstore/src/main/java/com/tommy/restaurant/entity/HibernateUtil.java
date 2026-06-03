@@ -1,4 +1,4 @@
-package com.tommy.bookstore.entity;
+package com.tommy.restaurant.entity;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -9,8 +9,8 @@ public class HibernateUtil {
     static {
         factory = new Configuration()
                 .configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Magazine.class)
-                .addAnnotatedClass(Publisher.class)
+                .addAnnotatedClass(Menu.class)
+                .addAnnotatedClass(Dish.class)
                 .buildSessionFactory();
     }
 

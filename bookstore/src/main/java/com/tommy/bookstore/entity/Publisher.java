@@ -14,7 +14,10 @@ public class Publisher {
     private Long id;
     private String name;
 
-    @OneToMany (mappedBy = "publisher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)   ///  хто володар relation --> publisher!
+    @OneToMany (mappedBy = "publisher",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     private List<Magazine> magazines;
 
     public Publisher() {}
@@ -59,6 +62,11 @@ public class Publisher {
             magazines = new ArrayList<>();
         }
         magazines.add(newMagazine);
+        newMagazine.setPublisher(this);
+    }
+
+    public void removeMagazine(Magazine magazine) {
+        magazine.setPublisher(null);
     }
 
     @Override
